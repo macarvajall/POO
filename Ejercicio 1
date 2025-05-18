@@ -1,0 +1,86 @@
+class Cuenta:
+    def __init__(self, saldo, tasa_anual):
+        self._saldo = saldo
+        self._numero_consignaciones = 0
+        self._numero_retiros = 0
+        self._tasa_anual = tasa_anual
+        self._comision_mensual = 0
+
+    def consignar(self, cantidad):
+        self._saldo += cantidad
+        self._numero_consignaciones += 1
+
+    def retirar(self, cantidad):
+        if cantidad <= self._saldo:
+            self._saldo -= cantidad
+            self._numero_retiros += 1
+        else:
+            print("La cantidad a retirar excede el saldo actual.")
+
+    def calcular_interes(self):
+        tasa_mensual = self._tasa_anual / 12
+        interes = self._saldo * tasa_mensual
+        self._saldo += interes
+
+    def extracto_mensual(self):
+        self._saldo -= self._comision_mensual
+        self.calcular_interes()
+
+    def imprimir(self):
+        print(f"Saldo = ${self._saldo:.2f}")
+        print(f"Cargo mensual = ${self._comision_mensual:.2f}")
+        total_trans = self._numero_consignaciones + self._numero_retiros
+        print(f"Número de movimientos = {total_trans}")
+        print()
+
+
+class CuentaAhorros(Cuenta):
+    def __init__(self, saldo, tasa_anual):
+        super().__init__(saldo, tasa_anual)
+        # La cuenta está activa solo si el saldo inicial ≥ 10 000
+        self._activa = saldo >= 10000
+
+    def consignar(self, cantidad):
+        super().consignar(cantidad)
+        # Si tras la consignación el saldo pasa a ≥ 10 000, se reactiva
+        if self._saldo >= 10000:
+            self._activa = True
+
+    def retirar(self, cantidad):
+        if not self._activa:
+            print("Cuenta inactiva. No se puede retirar.")
+            return
+        super().retirar(cantidad)
+        # Si tras el retiro el saldo baja de 10 000, se desactiva
+        if self._saldo < 10000:
+            self._activa = False
+
+    def extracto_mensual(self):
+        # La comisión es de $1.000 por cada retiro después del cuarto
+        if self._numero_retiros > 4:
+            self._comision_mensual = (self._numero_retiros - 4) * 1000
+        else:
+            self._comision_mensual = 0
+        super().extracto_mensual()
+
+
+if __name__ == "__main__":
+    print("Cuenta de ahorros\n")
+    try:
+        saldo_inicial = float(input("Ingrese saldo inicial: $"))
+        tasa_ahorros = float(input("Ingrese tasa de interés (como decimal): "))
+
+        cuenta = CuentaAhorros(saldo_inicial, tasa_ahorros)
+
+        monto_deposito = float(input("\nIngresar cantidad a consignar:"))
+        cuenta.consignar(monto_deposito)
+
+        monto_retiro = float(input("Ingresar cantidad a retirar:"))
+        cuenta.retirar(monto_retiro)
+
+        cuenta.extracto_mensual()
+        cuenta.imprimir()
+
+    except ValueError:
+        print("\nPor favor, ingrese valores numéricos válidos.")
+
