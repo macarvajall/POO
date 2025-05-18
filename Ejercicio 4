@@ -1,0 +1,84 @@
+class Persona:
+    def __init__(self, nombre, direccion):
+        self.__nombre = nombre
+        self.__direccion = direccion
+    
+    def getNombre(self):
+        return self.__nombre
+    
+    def getDireccion(self):
+        return self.__direccion
+    
+    def setNombre(self, nombre):
+        self.__nombre = nombre
+    
+    def setDireccion(self, direccion):
+        self.__direccion = direccion
+
+
+class Estudiante(Persona):
+    def __init__(self, nombre, direccion, carrera, semestre):
+        super().__init__(nombre, direccion)
+        self.__carrera = carrera
+        self.__semestre = semestre
+    
+    def getCarrera(self):
+        return self.__carrera
+    
+    def getSemestre(self):
+        return self.__semestre
+    
+    def setCarrera(self, carrera):
+        self.__carrera = carrera
+    
+    def setSemestre(self, semestre):
+        self.__semestre = semestre
+
+
+class Profesor(Persona):
+    def __init__(self, nombre, direccion, departamento, categoria):
+        super().__init__(nombre, direccion)
+        self.__departamento = departamento
+        self.__categoria = categoria
+    
+    def getDepartamento(self):
+        return self.__departamento
+    
+    def getCategoria(self):
+        return self.__categoria
+    
+    def setDepartamento(self, departamento):
+        self.__departamento = departamento
+    
+    def setCategoria(self, categoria):
+        self.__categoria = categoria
+
+
+if __name__ == "__main__":
+    # Crear un estudiante
+    estudiante = Estudiante("Maria Isabel", "Calle 6", "Estadística", 7)
+    print(f"Estudiante: {estudiante.getNombre()}")
+    print(f"Dirección: {estudiante.getDireccion()}")
+    print(f"Carrera: {estudiante.getCarrera()}")
+    print(f"Semestre: {estudiante.getSemestre()}")
+    
+    # Modificar datos del estudiante
+    estudiante.setCarrera("Sistemas")
+    print(f"Nueva Carrera: {estudiante.getCarrera()}")
+    estudiante.setSemestre(8)
+    print(f"Nuevo semestre: {estudiante.getSemestre()}")
+    
+    print("\n" + "-"*50 + "\n")
+    
+    # Crear un profesor
+    profesor = Profesor("Walter Arboleda", "UNAL", "Ingeniería", "Asociado")
+    print(f"Profesor: {profesor.getNombre()}")
+    print(f"Dirección: {profesor.getDireccion()}")
+    print(f"Departamento: {profesor.getDepartamento()}")
+    print(f"Categoría: {profesor.getCategoria()}")
+    
+    # Modificar datos del profesor
+    profesor.setDepartamento("Fisica")
+    print(f"Nuevo Depto: {profesor.getDepartamento()}")
+    profesor.setCategoria("Catedrático")
+    print(f"Nueva categoría: {profesor.getCategoria()}")
