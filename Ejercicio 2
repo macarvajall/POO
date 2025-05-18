@@ -1,0 +1,139 @@
+class Inmueble:
+    def __init__(self, identificador: int, area: int, direccion: str):
+        self._id = identificador
+        self._area = area
+        self._direccion = direccion
+
+    def valor_compra(self) -> float:
+        if not hasattr(self, 'rate_m2') or self.rate_m2 is None:
+            raise NotImplementedError("rate_m2 no definido en la subclase.")
+        return self._area * self.rate_m2
+
+    def __str__(self) -> str:
+        return f"ID:{self._id} | Área:{self._area}m2 | Dirección:{self._direccion}"
+
+
+
+class Vivienda(Inmueble):
+    def __init__(self, identificador, area, direccion, num_habitaciones, num_banos):
+        super().__init__(identificador, area, direccion)
+        self._num_habitaciones = num_habitaciones
+        self._num_banos = num_banos
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base} | Hab:{self._num_habitaciones} | Baños:{self._num_banos}"
+
+
+class Casa(Vivienda):
+    def __init__(self, identificador, area, direccion, num_habitaciones, num_banos, num_pisos):
+        super().__init__(identificador, area, direccion, num_habitaciones, num_banos)
+        self._num_pisos = num_pisos
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base} | Pisos:{self._num_pisos}"
+
+
+class CasaRural(Casa):
+    rate_m2 = 1500000
+    def __init__(self, identificador, area, direccion, num_habitaciones, num_banos, num_pisos,
+                 distancia_cabecera, altitud):
+        super().__init__(identificador, area, direccion, num_habitaciones, num_banos, num_pisos)
+        self._distancia_cabecera = distancia_cabecera  # km
+        self._altitud = altitud  # m
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base} | DistCab:{self._distancia_cabecera}km | Altitud:{self._altitud}m"
+
+
+class CasaUrbana(Casa):
+    pass
+
+
+class CasaConjunto(CasaUrbana):
+    rate_m2 = 2500000
+    def __init__(self, identificador, area, direccion, num_habitaciones, num_banos, num_pisos,
+                 valor_administracion, incluye_areas_comunes):
+        super().__init__(identificador, area, direccion, num_habitaciones, num_banos, num_pisos)
+        self._valor_administracion = valor_administracion
+        self._incluye_areas_comunes = incluye_areas_comunes  # bool
+
+    def __str__(self):
+        base = super().__str__()
+        comun = 'sí' if self._incluye_areas_comunes else 'no'
+        return f"{base} | Adm:$ {self._valor_administracion} | ÁreasComunes:{comun}"
+
+
+class CasaIndependiente(CasaUrbana):
+    rate_m2 = 3000000
+    def __init__(self, identificador, area, direccion, num_habitaciones, num_banos, num_pisos):
+        super().__init__(identificador, area, direccion, num_habitaciones, num_banos, num_pisos)
+
+
+class Apartamento(Vivienda):
+    rate_m2 = None
+    def __init__(self, identificador, area, direccion, num_habitaciones, num_banos, valor_administracion):
+        super().__init__(identificador, area, direccion, num_habitaciones, num_banos)
+        self._valor_administracion = valor_administracion
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base} | Adm:$ {self._valor_administracion}"        
+
+
+class ApartaEstudio(Apartamento):
+    rate_m2 = 1500000
+    def __init__(self, identificador, area, direccion, num_banos, valor_administracion):
+        super().__init__(identificador, area, direccion, 1, num_banos, valor_administracion)
+
+
+class ApartamentoFamiliar(Apartamento):
+    rate_m2 = 2000000
+    def __init__(self, identificador, area, direccion, num_habitaciones, num_banos, valor_administracion):
+        super().__init__(identificador, area, direccion, num_habitaciones, num_banos, valor_administracion)
+
+
+class Local(Inmueble):
+    def __init__(self, identificador, area, direccion, ubicacion):
+        super().__init__(identificador, area, direccion)
+        self._ubicacion = ubicacion
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base} | Ubicación:{self._ubicacion}"
+
+
+class LocalComercial(Local):
+    rate_m2 = 3000000
+    def __init__(self, identificador, area, direccion, ubicacion, centro_comercial):
+        super().__init__(identificador, area, direccion, ubicacion)
+        self._centro_comercial = centro_comercial
+
+    def __str__(self):
+        base = super().__str__()
+        return f"{base} | CentroComercial:{self._centro_comercial}"
+
+
+class Oficina(Local):
+    rate_m2 = 3500000
+    def __init__(self, identificador, area, direccion, ubicacion, es_gobierno):
+        super().__init__(identificador, area, direccion, ubicacion)
+        self._es_gobierno = es_gobierno
+
+    def __str__(self):
+        base = super().__str__()
+        gov = 'sí' if self._es_gobierno else 'no'
+        return f"{base} | Gobierno:{gov}"
+
+
+if __name__ == '__main__':
+    lista = [
+        ApartamentoFamiliar(103067, 120, 'Avenida Santander 45-45', 3, 2, 200000),
+        ApartaEstudio(12354, 50, 'Avenida Caracas 30-15', 1, 2),
+    ]
+
+    for inmueble in lista:
+        print(inmueble)
+        print(f"Valor de compra: $ {inmueble.valor_compra():,.2f}\n")
